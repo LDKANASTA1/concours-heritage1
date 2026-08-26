@@ -6,9 +6,9 @@
 <title>Concours des Ambassadeurs de la Promotion - Complexe Scolaire HERITAGE 1</title>
 <meta name="description" content="Élis les ambassadeurs de ta promotion au Complexe Scolaire HERITAGE 1 : un vote direct, transparent et vérifiable par tous.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/animations.css">
-<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="frontend/css/style.css">
+<link rel="stylesheet" href="frontend/css/animations.css">
+<link rel="stylesheet" href="frontend/css/responsive.css">
 </head>
 <body>
 
@@ -79,11 +79,11 @@
 
 <div id="pied-racine"></div>
 
-<script src="js/api.js"></script>
-<script src="js/app.js"></script>
-<script src="js/share.js"></script>
+<script src="frontend/js/api.js"></script>
+<script src="frontend/js/app.js"></script>
+<script src="frontend/js/share.js"></script>
 <script>
-  window.HERITAGE1_API_URL = "http://localhost:8000";
+  window.HERITAGE1_API_URL = "https://concours-backend-686g.onrender.com";
   document.addEventListener("DOMContentLoaded", async () => {
     try {
       const options = await Api.get("/api/users/options");
