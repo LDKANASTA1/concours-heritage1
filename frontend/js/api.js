@@ -2,7 +2,7 @@
  * Client API - point d'entrée unique vers le backend FastAPI.
  * Modifiez API_BASE_URL selon votre environnement (voir .env du frontend / README).
  */
-const API_BASE_URL = window.HERITAGE1_API_URL || "http://localhost:8000";
+const API_BASE_URL = window.HERITAGE1_API_URL || "https://concours-backend-686g.onrender.com";
 
 const Api = {
   _token() {
