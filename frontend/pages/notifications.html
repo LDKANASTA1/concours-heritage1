@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section" style="max-width:640px;margin:0 auto;">
+  <div class="conteneur">
+    <div class="flex-entre" style="margin-bottom:20px;">
+      <h2 style="margin:0;">Notifications</h2>
+      <button id="marquer-tout-lu" class="bouton bouton--petit bouton--contour">Tout marquer comme lu</button>
+    </div>
+
+    <div id="liste-notifications">
+      <div class="squelette" style="height:80px;margin-bottom:12px;"></div>
+      <div class="squelette" style="height:80px;margin-bottom:12px;"></div>
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détail d'une option - Concours des Ambassadeurs - HERITAGE 1</title>
+<meta name="description" content="Cette page affiche le détail de n'importe quelle option via le paramètre ?code= (ex: option-detail.html?code=MG), afin d'éviter de dupliquer 7 pages quasi identiques.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section">
+  <div class="conteneur">
+    <div class="centre-texte" style="margin-bottom:10px;">
+      <span class="badge" id="option-code">—</span>
+      <h2 id="option-nom">Chargement...</h2>
+    </div>
+
+    <div class="grille grille--3" style="margin-bottom:30px;" id="stats-option">
+      <div class="squelette" style="height:90px;"></div>
+      <div class="squelette" style="height:90px;"></div>
+      <div class="squelette" style="height:90px;"></div>
+    </div>
+
+    <h3>Candidats de cette option</h3>
+    <div class="grille grille--candidats" id="candidats-option" style="margin-top:16px;">
+      <div class="squelette" style="height:280px;"></div>
+      <div class="squelette" style="height:280px;"></div>
+    </div>
+
+    <div class="centre-texte" style="margin-top:30px;">
+      <button class="bouton bouton--whatsapp" id="partage-option"><i class="fa-brands fa-whatsapp"></i> Partager cette option</button>
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (!code) {
+      document.getElementById("option-nom").textContent = "Aucune option spécifiée.";
+      return;
+    }
+
+    try {
+      const options = await Api.get("/api/users/options");
+      const option = options.find(o => o.code === code);
+      document.getElementById("option-code").textContent = code;
+      document.getElementById("option-nom").textContent = option ? option.nom : code;
+      document.title = `${option ? option.nom : code} - Concours des Ambassadeurs - HERITAGE 1`;
+
+      const stats = await Api.get(`/api/statistiques/option/${code}`);
+      document.getElementById("stats-option").innerHTML = `
+        <div class="carte centre-texte"><h3>${stats.total_inscrits}</h3><p class="texte-att">Candidats inscrits</p></div>
+        <div class="carte centre-texte"><h3>${stats.total_votants}</h3><p class="texte-att">Votants</p></div>
+        <div class="carte centre-texte"><h3>${stats.taux_participation}%</h3><p class="texte-att">Taux de participation</p></div>
+      `;
+
+      const candidats = await Api.get(`/api/users/candidats/${code}`);
+      document.getElementById("candidats-option").innerHTML = candidats.map(c => `
+        <div class="carte carte--candidat">
+          <img class="carte--candidat__photo" src="${c.photo_url}" alt="${c.prenom} ${c.nom}" loading="lazy">
+          <div class="carte--candidat__corps">
+            <h3>${c.prenom} ${c.nom}</h3>
+            <p class="texte-att">${c.presentation.slice(0, 120)}${c.presentation.length > 120 ? "…" : ""}</p>
+          </div>
+        </div>
+      `).join("") || `<div class="vide"><i class="fa-solid fa-user-group"></i><p>Aucun candidat inscrit pour l'instant.</p></div>`;
+
+      document.getElementById("partage-option").addEventListener("click", async () => {
+        const { lien_whatsapp } = await Api.get(`/api/share/message/option?detail=${encodeURIComponent(option ? option.nom : code)}`);
+        window.open(lien_whatsapp, "_blank", "noopener");
+      });
+    } catch (err) {
+      afficherToast(err.message, "erreur");
+    }
+  });
+</script>
+</body>
+</html>

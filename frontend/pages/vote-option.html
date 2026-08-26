@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote de mon option - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section">
+  <div class="conteneur">
+    <div class="centre-texte" style="margin-bottom:10px;">
+      <span class="badge">Phase 1</span>
+      <h2>Qui représente le mieux l'option <span id="nom-option-vote">—</span> ?</h2>
+      <p class="texte-att">Vote pour le/la candidat(e) qui, selon toi, fait preuve du plus de leadership, d'engagement et d'esprit d'équipe. Tu peux changer ton vote à tout moment tant que le vote reste ouvert.</p>
+      <p id="etat-vote-option" class="champ__aide" style="color:var(--succes);"></p>
+    </div>
+
+    <div class="grille grille--candidats" id="liste-candidats-option">
+      <div class="squelette" style="height:280px;"></div>
+      <div class="squelette" style="height:280px;"></div>
+      <div class="squelette" style="height:280px;"></div>
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/votes.js"></script>
+</body>
+</html>

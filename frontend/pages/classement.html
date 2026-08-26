@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classement - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section">
+  <div class="conteneur">
+    <div class="centre-texte" style="margin-bottom:20px;">
+      <h2>Classement transparent</h2>
+      <p class="texte-att">Résultats recalculés en temps réel à chaque vote — consultables par tous, à tout moment.</p>
+    </div>
+
+    <div class="flex" id="selecteurs-options" style="flex-wrap:wrap;justify-content:center;margin-bottom:26px;"></div>
+
+    <div id="classement-option"></div>
+
+    <div class="centre-texte" style="margin-top:30px;">
+      <button class="bouton bouton--whatsapp" data-partage="classement"><i class="fa-brands fa-whatsapp"></i> Partager ce classement</button>
+    </div>
+
+    <hr style="margin:50px 0;border:none;border-top:1px solid var(--bordure);">
+
+    <h2 class="centre-texte">Classement général de la promotion</h2>
+    <p class="centre-texte texte-att">Les 7 ambassadeurs d'options, et l'état de la course au Grand Ambassadeur.</p>
+    <div class="grille grille--3" id="classement-general" style="margin-top:20px;"></div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/statistiques.js"></script>
+<script src="../js/share.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const options = await Api.get("/api/users/options");
+      const params = new URLSearchParams(window.location.search);
+      const optionActuelle = params.get("option") || options[0].code;
+
+      document.getElementById("selecteurs-options").innerHTML = options.map(o => `
+        <button class="bouton bouton--petit ${o.code === optionActuelle ? "bouton--principal" : "bouton--contour"} selecteur-option" data-option="${o.code}">${o.code}</button>
+      `).join("");
+
+      document.querySelectorAll(".selecteur-option").forEach(btn => {
+        btn.addEventListener("click", () => {
+          window.location.search = `?option=${btn.dataset.option}`;
+        });
+      });
+
+      const general = await Api.get("/api/statistiques/classement-general");
+      const candidatsIds = general.ambassadeurs_options.map(a => a.candidat_id);
+      let candidatsInfo = {};
+      if (candidatsIds.length) {
+        // Récupère les infos candidat via la route publique de chaque option
+        for (const amb of general.ambassadeurs_options) {
+          try {
+            const c = await Api.get(`/api/users/candidats/${amb.option}/${amb.candidat_id}`);
+            candidatsInfo[amb.candidat_id] = c;
+          } catch (_) {}
+        }
+      }
+
+      document.getElementById("classement-general").innerHTML = general.ambassadeurs_options.map(a => {
+        const c = candidatsInfo[a.candidat_id];
+        return `
+          <div class="carte centre-texte">
+            <span class="badge">${a.option}</span>
+            ${c ? `<img src="${c.photo_url}" alt="${c.prenom}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;margin:10px auto;">
+                   <h3 style="margin:6px 0;">${c.prenom} ${c.nom}</h3>` : `<p>Aucun élu pour l'instant</p>`}
+            <p class="texte-att">${a.nb_votes} vote(s)</p>
+          </div>`;
+      }).join("") || `<p class="texte-att centre-texte">Aucun ambassadeur élu pour le moment.</p>`;
+
+      if (general.grand_ambassadeur) {
+        document.getElementById("classement-general").innerHTML += `
+          <div class="carte centre-texte" style="border:2px solid var(--or);">
+            <i class="fa-solid fa-crown" style="color:var(--or);font-size:1.6rem;"></i>
+            <h3>Grand Ambassadeur actuel</h3>
+            <p class="texte-att">${general.grand_ambassadeur.nb_votes} vote(s) en finale</p>
+          </div>`;
+      }
+    } catch (err) {
+      afficherToast("Erreur de chargement du classement : " + err.message, "erreur");
+    }
+  });
+</script>
+</body>
+</html>

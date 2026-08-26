@@ -1,0 +1,468 @@
+/* =====================================================================
+   CONCOURS DES AMBASSADEURS DE LA PROMOTION - Complexe Scolaire HERITAGE 1
+   Système de design : palette bleu/violet + or, typographie Poppins/Inter.
+   Signature : le "ruban de transparence" - une barre de progression animée
+   qui matérialise chaque décompte de vote, écho visuel du principe central
+   du projet (remplacer un comptage manuel opaque par un résultat vérifiable).
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Couleurs de marque (imposées par le cahier des charges) */
+  --bleu-fonce: #1a237e;
+  --degrade-debut: #667eea;
+  --degrade-fin: #764ba2;
+  --or: #ffd700;
+  --succes: #4caf50;
+  --erreur: #f44336;
+  --info: #2196f3;
+
+  --degrade-principal: linear-gradient(135deg, var(--degrade-debut) 0%, var(--degrade-fin) 100%);
+  --degrade-fonce: linear-gradient(135deg, var(--bleu-fonce) 0%, var(--degrade-fin) 100%);
+
+  /* Neutres */
+  --fond: #f6f7fc;
+  --surface: #ffffff;
+  --texte: #1a1a2e;
+  --texte-att: #5c5c72;
+  --bordure: #e4e4f0;
+
+  /* Typographie */
+  --police-titre: 'Poppins', sans-serif;
+  --police-texte: 'Inter', sans-serif;
+
+  /* Rythme */
+  --rayon: 14px;
+  --rayon-sm: 8px;
+  --ombre: 0 4px 20px rgba(26, 35, 126, 0.08);
+  --ombre-forte: 0 12px 32px rgba(26, 35, 126, 0.16);
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--police-texte);
+  color: var(--texte);
+  background: var(--fond);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--police-titre);
+  color: var(--bleu-fonce);
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+}
+
+h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; }
+h2 { font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 700; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+
+p { margin: 0 0 1em; color: var(--texte-att); }
+
+a { color: var(--degrade-fin); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+/* Accessibilité clavier : focus toujours visible */
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 2px;
+}
+
+.conteneur {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------- Barre de navigation ---------- */
+
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--degrade-fonce);
+  box-shadow: var(--ombre);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.nav__marque {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.nav__marque i { color: var(--or); font-size: 1.4rem; }
+
+.nav__liens {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav__liens a {
+  color: rgba(255,255,255,0.85);
+  padding: 8px 14px;
+  border-radius: var(--rayon-sm);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+}
+
+.nav__liens a:hover, .nav__liens a.actif {
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  text-decoration: none;
+}
+
+.nav__actions { display: flex; align-items: center; gap: 10px; }
+
+.nav__burger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+@media (max-width: 880px) {
+  .nav__burger { display: block; }
+  .nav__liens {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bleu-fonce);
+    flex-direction: column;
+    padding: 10px;
+    display: none;
+  }
+  .nav__liens.ouvert { display: flex; }
+  .nav__liens a { display: block; padding: 12px 14px; }
+}
+
+/* ---------- Boutons ---------- */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--police-texte);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: var(--rayon-sm);
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+}
+
+.bouton:active { transform: scale(0.98); }
+.bouton:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.bouton--principal {
+  background: var(--degrade-principal);
+  color: #fff;
+  box-shadow: var(--ombre);
+}
+.bouton--principal:hover { box-shadow: var(--ombre-forte); text-decoration: none; }
+
+.bouton--or {
+  background: var(--or);
+  color: var(--bleu-fonce);
+}
+
+.bouton--contour {
+  background: transparent;
+  color: var(--degrade-fin);
+  border: 2px solid var(--degrade-fin);
+}
+.bouton--contour:hover { background: var(--degrade-fin); color: #fff; text-decoration: none; }
+
+.bouton--whatsapp {
+  background: #25D366;
+  color: #fff;
+}
+
+.bouton--danger { background: var(--erreur); color: #fff; }
+.bouton--bloc { width: 100%; }
+.bouton--petit { padding: 8px 14px; font-size: 0.85rem; }
+
+/* ---------- Cartes ---------- */
+
+.carte {
+  background: var(--surface);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 24px;
+}
+
+.carte--candidat {
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.carte--candidat__photo {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  width: 100%;
+  background: var(--bordure);
+}
+
+.carte--candidat__corps { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(102, 126, 234, 0.12);
+  color: var(--degrade-fin);
+}
+
+.badge--or { background: rgba(255, 215, 0, 0.18); color: #8a6d00; }
+
+/* ---------- Ruban de transparence (signature) ---------- */
+/* Barre de progression animée utilisée partout où un décompte de votes est affiché */
+
+.ruban {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.ruban__piste {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bordure);
+  overflow: hidden;
+}
+
+.ruban__remplissage {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--degrade-principal);
+  width: 0%;
+  transition: width 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ruban__remplissage.est-premier { background: linear-gradient(135deg, var(--or), #c9a600); }
+
+.ruban__valeur {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--bleu-fonce);
+  min-width: 3.5ch;
+  text-align: right;
+}
+
+/* ---------- Formulaires ---------- */
+
+.champ { margin-bottom: 18px; }
+
+.champ label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+  color: var(--texte);
+}
+
+.champ input, .champ select, .champ textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon-sm);
+  font-family: var(--police-texte);
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--texte);
+  transition: border-color var(--transition);
+}
+
+.champ input:focus, .champ select:focus, .champ textarea:focus {
+  border-color: var(--degrade-fin);
+  outline: none;
+}
+
+.champ__aide { font-size: 0.8rem; color: var(--texte-att); margin-top: 4px; }
+.champ__erreur { font-size: 0.8rem; color: var(--erreur); margin-top: 4px; display: none; }
+
+.case-a-cocher { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.case-a-cocher input { width: auto; margin-top: 3px; }
+.case-a-cocher label { font-size: 0.85rem; color: var(--texte-att); font-weight: 400; }
+
+/* ---------- Sections & hero ---------- */
+
+.section { padding: 56px 0; }
+.section--serree { padding: 32px 0; }
+
+.hero {
+  background: var(--degrade-fonce);
+  color: #fff;
+  padding: 90px 0 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255,215,0,0.15), transparent 45%);
+  pointer-events: none;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  color: var(--or);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.hero h1 { color: #fff; max-width: 720px; }
+.hero p.hero__texte { color: rgba(255,255,255,0.85); max-width: 600px; font-size: 1.05rem; }
+.hero__actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+
+/* ---------- Grilles ---------- */
+
+.grille { display: grid; gap: 22px; }
+.grille--candidats { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.grille--options { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.grille--2 { grid-template-columns: repeat(2, 1fr); }
+.grille--3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 720px) {
+  .grille--2, .grille--3 { grid-template-columns: 1fr; }
+}
+
+/* ---------- Étapes (processus réel : phase 1 puis phase 2) ---------- */
+
+.etapes { display: flex; gap: 18px; counter-reset: etape; margin: 30px 0; flex-wrap: wrap; }
+.etape {
+  flex: 1;
+  min-width: 220px;
+  background: var(--surface);
+  border-radius: var(--rayon);
+  padding: 20px;
+  box-shadow: var(--ombre);
+  border-top: 4px solid var(--degrade-fin);
+}
+.etape__numero {
+  counter-increment: etape;
+  font-family: var(--police-titre);
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--or);
+  -webkit-text-stroke: 1px var(--bleu-fonce);
+}
+.etape__numero::before { content: counter(etape, decimal-leading-zero); }
+
+/* ---------- Pied de page ---------- */
+
+.pied {
+  background: var(--bleu-fonce);
+  color: rgba(255,255,255,0.75);
+  padding: 46px 0 24px;
+  margin-top: 60px;
+}
+.pied a { color: #fff; }
+.pied__grille { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; margin-bottom: 28px; }
+.pied h4 { color: #fff; font-size: 0.95rem; margin-bottom: 14px; }
+.pied ul { list-style: none; padding: 0; margin: 0; }
+.pied li { margin-bottom: 8px; font-size: 0.9rem; }
+.pied__bas {
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 18px;
+  font-size: 0.82rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+@media (max-width: 720px) { .pied__grille { grid-template-columns: 1fr; } }
+
+/* ---------- Squelettes de chargement ---------- */
+
+.squelette {
+  background: linear-gradient(90deg, #eceef8 25%, #f6f7fc 37%, #eceef8 63%);
+  background-size: 400% 100%;
+  animation: chargement 1.4s ease infinite;
+  border-radius: var(--rayon-sm);
+}
+@keyframes chargement { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+/* ---------- Toasts ---------- */
+
+.zone-toasts {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--surface);
+  border-left: 4px solid var(--info);
+  box-shadow: var(--ombre-forte);
+  border-radius: var(--rayon-sm);
+  padding: 14px 18px;
+  min-width: 260px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.toast--succes { border-color: var(--succes); }
+.toast--erreur { border-color: var(--erreur); }
+
+/* ---------- Utilitaires ---------- */
+
+.centre-texte { text-align: center; }
+.mt-0 { margin-top: 0; }
+.flex { display: flex; align-items: center; gap: 10px; }
+.flex-entre { display: flex; align-items: center; justify-content: space-between; }
+.espace-icone { display: inline-flex; align-items: center; gap: 8px; }
+.texte-att { color: var(--texte-att); font-size: 0.88rem; }
+.vide { text-align: center; padding: 50px 20px; color: var(--texte-att); }
+.vide i { font-size: 2.4rem; color: var(--bordure); margin-bottom: 14px; }

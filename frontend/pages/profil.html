@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon profil - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section" style="max-width:600px;margin:0 auto;">
+  <div class="conteneur">
+    <h2 class="centre-texte">Mon profil</h2>
+    <p class="texte-att centre-texte">L'option et le genre ne sont pas modifiables après inscription, pour garantir la cohérence du concours.</p>
+
+    <div class="carte anim-entree">
+      <form id="form-profil" novalidate>
+        <div class="grille grille--2">
+          <div class="champ">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom">
+          </div>
+          <div class="champ">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom">
+          </div>
+        </div>
+        <div class="champ">
+          <label for="classe">Classe</label>
+          <input type="text" id="classe" name="classe">
+        </div>
+        <div class="champ">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div class="champ">
+          <label for="presentation">Ma présentation</label>
+          <textarea id="presentation" name="presentation" rows="5" minlength="50" maxlength="800"></textarea>
+        </div>
+        <button type="submit" class="bouton bouton--principal bouton--bloc"><i class="fa-solid fa-floppy-disk"></i> Enregistrer les modifications</button>
+      </form>
+    </div>
+
+    <div class="carte" style="margin-top:24px;border:1px solid #fdecea;">
+      <h3 style="color:var(--erreur);"><i class="fa-solid fa-triangle-exclamation"></i> Zone sensible</h3>
+      <p class="texte-att">Supprimer ton compte retire définitivement ta candidature et tous tes votes. Cette action est irréversible.</p>
+      <button id="supprimer-compte" class="bouton bouton--danger">Supprimer mon compte</button>
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const form = document.getElementById("form-profil");
+    try {
+      const profil = await Api.get("/api/users/moi");
+      form.nom.value = profil.nom;
+      form.prenom.value = profil.prenom;
+      form.classe.value = profil.classe;
+      form.presentation.value = profil.presentation;
+    } catch (err) {
+      afficherToast("Impossible de charger ton profil.", "erreur");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        await Api.patch("/api/users/moi", {
+          nom: form.nom.value.trim(),
+          prenom: form.prenom.value.trim(),
+          classe: form.classe.value.trim(),
+          email: form.email.value.trim() || null,
+          presentation: form.presentation.value.trim(),
+        });
+        afficherToast("Profil mis à jour.", "succes");
+      } catch (err) {
+        afficherToast(err.message, "erreur");
+      }
+    });
+
+    document.getElementById("supprimer-compte").addEventListener("click", async () => {
+      if (!confirm("Es-tu sûr(e) de vouloir supprimer définitivement ton compte et ta candidature ?")) return;
+      try {
+        await Api.del("/api/users/moi");
+        afficherToast("Compte supprimé.", "succes");
+        setTimeout(deconnecter, 1200);
+      } catch (err) {
+        afficherToast(err.message, "erreur");
+      }
+    });
+  });
+</script>
+</body>
+</html>

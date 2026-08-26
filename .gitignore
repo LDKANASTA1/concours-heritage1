@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Base de données locale
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Uploads locaux
+uploads/
+static/uploads/
+media/
+
+# Node (si outillage frontend ajouté plus tard)
+node_modules/
+package-lock.json
+npm-debug.log
+
+# Divers
+.pytest_cache/
+.coverage
+htmlcov/

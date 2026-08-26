@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concours des Ambassadeurs de la Promotion - Complexe Scolaire HERITAGE 1</title>
+<meta name="description" content="Élis les ambassadeurs de ta promotion au Complexe Scolaire HERITAGE 1 : un vote direct, transparent et vérifiable par tous.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="hero">
+  <div class="conteneur">
+    <span class="hero__eyebrow"><i class="fa-solid fa-star"></i> 6e des humanités - Terminales</span>
+    <h1 class="anim-entree">Élisez les Ambassadeurs de votre Promotion</h1>
+    <p class="hero__texte anim-entree anim-entree--retard-1">
+      Un vote direct et transparent, basé sur le leadership, l'engagement et la représentativité de chaque candidat —
+      pas sur son apparence. Fini le comptage manuel : les résultats sont vérifiables en temps réel par toute la promotion.
+    </p>
+    <div class="hero__actions anim-entree anim-entree--retard-2">
+      <a href="pages/inscription.html" class="bouton bouton--or"><i class="fa-solid fa-pen-to-square"></i> Déposer ma candidature</a>
+      <a href="pages/classement.html" class="bouton bouton--contour" style="color:#fff;border-color:rgba(255,255,255,0.6);"><i class="fa-solid fa-chart-simple"></i> Voir le classement</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="conteneur">
+    <h2 class="centre-texte">Comment fonctionne le concours ?</h2>
+    <p class="centre-texte" style="max-width:640px;margin:0 auto;">Deux phases, un seul principe : un vote direct, sans duel ni comparaison d'apparence.</p>
+    <div class="etapes">
+      <div class="etape anim-entree">
+        <span class="etape__numero"></span>
+        <h3>Candidature</h3>
+        <p>Chaque élève dépose une photo de profil et une présentation écrite : pourquoi il/elle mérite de représenter son option.</p>
+      </div>
+      <div class="etape anim-entree anim-entree--retard-1">
+        <span class="etape__numero"></span>
+        <h3>Vote par option</h3>
+        <p>Les élèves votent directement pour le/la candidat(e) de leur option qui les représente le mieux. Un seul vote, modifiable.</p>
+      </div>
+      <div class="etape anim-entree anim-entree--retard-2">
+        <span class="etape__numero"></span>
+        <h3>Grand Ambassadeur</h3>
+        <p>Les 7 élus d'options s'affrontent en vote direct pour devenir le Grand Ambassadeur de la Promotion.</p>
+      </div>
+      <div class="etape anim-entree anim-entree--retard-3">
+        <span class="etape__numero"></span>
+        <h3>Transparence totale</h3>
+        <p>Statistiques et historique consultables à tout moment par tous les élèves inscrits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="conteneur">
+    <h2 class="centre-texte">Les 7 options en compétition</h2>
+    <div class="grille grille--options" id="grille-options-accueil" style="margin-top:24px;">
+      <div class="squelette" style="height:90px;"></div>
+      <div class="squelette" style="height:90px;"></div>
+      <div class="squelette" style="height:90px;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section centre-texte">
+  <div class="conteneur">
+    <h2>Partage la transparence du concours</h2>
+    <p>Invite tes camarades à suivre le classement en direct.</p>
+    <button class="bouton bouton--whatsapp" data-partage="accueil"><i class="fa-brands fa-whatsapp"></i> Partager sur WhatsApp</button>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/share.js"></script>
+<script>
+  window.HERITAGE1_API_URL = "http://localhost:8000";
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const options = await Api.get("/api/users/options");
+      document.getElementById("grille-options-accueil").innerHTML = options.map(o => `
+        <a href="pages/option-detail.html?code=${o.code}" class="carte" style="text-align:center;">
+          <i class="fa-solid fa-ribbon" style="color:var(--degrade-fin);font-size:1.4rem;"></i>
+          <h3 style="margin:10px 0 2px;font-size:1rem;">${o.nom}</h3>
+          <span class="badge">${o.code}</span>
+        </a>
+      `).join("");
+    } catch (e) {
+      document.getElementById("grille-options-accueil").innerHTML = `<p class="texte-att">Impossible de charger les options pour le moment.</p>`;
+    }
+  });
+</script>
+</body>
+</html>

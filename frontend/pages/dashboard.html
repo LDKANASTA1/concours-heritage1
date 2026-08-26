@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section">
+  <div class="conteneur">
+
+    <div class="carte anim-entree" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:24px;">
+      <img id="db-photo" src="" alt="Ma photo de profil" style="width:88px;height:88px;border-radius:50%;object-fit:cover;">
+      <div style="flex:1;min-width:200px;">
+        <h2 id="db-nom" style="margin-bottom:2px;">—</h2>
+        <p class="texte-att" style="margin:0;"><span id="db-option" class="badge"></span> · <span id="db-classe"></span></p>
+      </div>
+      <a href="profil.html" class="bouton bouton--contour bouton--petit"><i class="fa-solid fa-user-pen"></i> Modifier mon profil</a>
+    </div>
+
+    <div class="grille grille--3" style="margin-bottom:30px;">
+      <a href="vote-option.html" class="carte anim-entree anim-entree--retard-1" style="text-decoration:none;">
+        <i class="fa-solid fa-check-to-slot" style="font-size:1.6rem;color:var(--degrade-fin);"></i>
+        <h3>Vote de mon option</h3>
+        <p class="texte-att" style="margin:0;">Choisis l'ambassadeur/ambassadrice de ton option.</p>
+      </a>
+      <a href="vote-finale.html" class="carte anim-entree anim-entree--retard-2" style="text-decoration:none;">
+        <i class="fa-solid fa-trophy" style="font-size:1.6rem;color:var(--or);"></i>
+        <h3>Vote final</h3>
+        <p class="texte-att" style="margin:0;">Vote pour le Grand Ambassadeur de la Promotion.</p>
+      </a>
+      <a href="notifications.html" class="carte anim-entree anim-entree--retard-3" style="text-decoration:none;">
+        <i class="fa-solid fa-bell" style="font-size:1.6rem;color:var(--info);"></i>
+        <h3>Notifications</h3>
+        <p class="texte-att" style="margin:0;">Suis les évolutions du classement en temps réel.</p>
+      </a>
+    </div>
+
+    <div class="carte anim-entree">
+      <h3><i class="fa-solid fa-lightbulb" style="color:var(--or);"></i> Ma candidature</h3>
+      <p id="db-presentation" class="texte-att"></p>
+    </div>
+
+    <div class="centre-texte" style="margin-top:24px;">
+      <button id="db-deconnexion" class="bouton bouton--contour"><i class="fa-solid fa-right-from-bracket"></i> Se déconnecter</button>
+    </div>
+
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const profil = await Api.get("/api/users/moi");
+      localStorage.setItem("h1_profil", JSON.stringify(profil));
+      document.getElementById("db-photo").src = profil.photo_url;
+      document.getElementById("db-nom").textContent = `${profil.prenom} ${profil.nom}`;
+      document.getElementById("db-option").textContent = profil.option;
+      document.getElementById("db-classe").textContent = profil.classe;
+      document.getElementById("db-presentation").textContent = profil.presentation;
+    } catch (err) {
+      afficherToast("Session expirée, merci de te reconnecter.", "erreur");
+      setTimeout(deconnecter, 1500);
+    }
+
+    document.getElementById("db-deconnexion").addEventListener("click", deconnecter);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Déploiement optionnel avec Docker. Le frontend étant du HTML/CSS/JS statique,
+# il peut être servi par n'importe quel hébergeur statique (Netlify, GitHub Pages, etc.)
+# ou par le service "frontend" ci-dessous pendant les tests locaux.
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: heritage1
+      POSTGRES_PASSWORD: changez_ce_mot_de_passe
+      POSTGRES_DB: concours_heritage1_db
+    volumes:
+      - donnees_postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://heritage1:changez_ce_mot_de_passe@db:5432/concours_heritage1_db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "5500:80"
+
+volumes:
+  donnees_postgres:

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historique des ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="section">
+  <div class="conteneur">
+    <div class="centre-texte" style="margin-bottom:20px;">
+      <h2>Historique complet des changements</h2>
+      <p class="texte-att">Chaque changement d'ambassadeur est conservé avec sa date, pour garantir une traçabilité totale du concours.</p>
+    </div>
+
+    <div class="flex" id="selecteurs-options-historique" style="flex-wrap:wrap;justify-content:center;margin-bottom:26px;"></div>
+
+    <div id="liste-historique">
+      <div class="squelette" style="height:60px;margin-bottom:10px;"></div>
+      <div class="squelette" style="height:60px;margin-bottom:10px;"></div>
+      <div class="squelette" style="height:60px;"></div>
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "http://localhost:8000";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+  async function chargerHistorique(option) {
+    const conteneur = document.getElementById("liste-historique");
+    try {
+      const historique = await Api.get(`/api/statistiques/historique/${option}`);
+      if (!historique.length) {
+        conteneur.innerHTML = `<div class="vide"><i class="fa-solid fa-clock-rotate-left"></i><p>Aucun changement enregistré pour le moment.</p></div>`;
+        return;
+      }
+      conteneur.innerHTML = historique.map(h => `
+        <div class="carte flex" style="margin-bottom:12px;">
+          <i class="fa-solid ${h.est_actuel ? "fa-crown" : "fa-clock-rotate-left"}" style="color:${h.est_actuel ? "var(--or)" : "var(--texte-att)"};font-size:1.3rem;"></i>
+          <div style="flex:1;">
+            <strong>${h.est_actuel ? "Ambassadeur actuel" : "Ancien ambassadeur"}</strong>
+            <p class="texte-att" style="margin:2px 0 0;">
+              ${h.nb_votes} vote(s) · du ${new Date(h.date_debut).toLocaleDateString("fr-FR")}
+              ${h.date_fin ? " au " + new Date(h.date_fin).toLocaleDateString("fr-FR") : " à aujourd'hui"}
+            </p>
+          </div>
+        </div>
+      `).join("");
+    } catch (err) {
+      conteneur.innerHTML = `<div class="vide"><p>${err.message}</p></div>`;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const options = await Api.get("/api/users/options");
+    const toutesOptions = [...options.map(o => o.code), "GRAND_AMBASSADEUR"];
+    const params = new URLSearchParams(window.location.search);
+    const optionActuelle = params.get("option") || options[0].code;
+
+    document.getElementById("selecteurs-options-historique").innerHTML = toutesOptions.map(code => `
+      <button class="bouton bouton--petit ${code === optionActuelle ? "bouton--principal" : "bouton--contour"} selecteur-historique" data-option="${code}">
+        ${code === "GRAND_AMBASSADEUR" ? "Grand Ambassadeur" : code}
+      </button>
+    `).join("");
+
+    document.querySelectorAll(".selecteur-historique").forEach(btn => {
+      btn.addEventListener("click", () => { window.location.search = `?option=${btn.dataset.option}`; });
+    });
+
+    chargerHistorique(optionActuelle);
+  });
+</script>
+</body>
+</html>
