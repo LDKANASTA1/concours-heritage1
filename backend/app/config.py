@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     SMTP_ENABLED: bool = True
 
     # URLs
-    BASE_URL: str = "http://localhost:8000"
-    FRONTEND_URL: str = "http://localhost:5500"
+    BASE_URL: str = "https://concours-backend-686g.onrender.com"
+    FRONTEND_URL: str = "https://ldkanasta1.github.io/concours-heritage1/"
 
     # Environnement
     ENVIRONMENT: str = "development"
