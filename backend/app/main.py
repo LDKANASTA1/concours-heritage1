@@ -31,10 +31,21 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS : en production, remplacez "*" par l'URL exacte de votre frontend (settings.FRONTEND_URL)
+# CORS : liste des origines explicitement autorisées à appeler cette API.
+# On inclut TOUJOURS l'URL GitHub Pages réelle du projet en dur, en plus de
+# settings.FRONTEND_URL, pour ne pas dépendre uniquement d'une variable
+# d'environnement bien réglée sur Render (une erreur de config y a déjà cassé
+# les appels API depuis le frontend une fois : mieux vaut une valeur de secours fiable).
+ORIGINES_AUTORISEES = {
+    settings.FRONTEND_URL,
+    "https://ldkanasta1.github.io",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+}
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://concours-backend-686g.onrender.com", "https://concours-backend-686g.onrender.com", "http://localhost:5500", "http://127.0.0.1:5500"] if not settings.DEBUG else ["*"],
+    allow_origins=["*"] if settings.DEBUG else list(ORIGINES_AUTORISEES),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -33,13 +33,28 @@ async function initFormulaireConnexion() {
   });
 }
 
+/** Réessaie une requête GET une fois de plus après un délai, utile quand le backend
+ *  (hébergé sur un plan gratuit type Render) est en veille et met du temps à répondre
+ *  à la toute première requête après une période d'inactivité. */
+async function requeteAvecRelance(chemin, tentatives = 2, delaiMs = 6000) {
+  for (let i = 0; i < tentatives; i++) {
+    try {
+      return await Api.get(chemin);
+    } catch (err) {
+      if (i === tentatives - 1) throw err;
+      afficherToast("Le serveur met un peu de temps à répondre (démarrage à froid), nouvelle tentative...", "info");
+      await new Promise((resoudre) => setTimeout(resoudre, delaiMs));
+    }
+  }
+}
+
 async function initFormulaireInscription() {
   const form = document.getElementById("form-inscription");
   if (!form) return;
 
-  // Remplit dynamiquement la liste des options depuis l'API
+  // Remplit dynamiquement la liste des options depuis l'API (avec 1 nouvelle tentative automatique)
   try {
-    const options = await Api.get("/api/users/options");
+    const options = await requeteAvecRelance("/api/users/options");
     const select = form.option;
     options.forEach((o) => {
       const opt = document.createElement("option");
@@ -48,10 +63,15 @@ async function initFormulaireInscription() {
       select.appendChild(opt);
     });
   } catch (_) {
-    afficherToast("Impossible de charger la liste des options. Vérifiez que le serveur est démarré.", "erreur");
+    afficherToast("Impossible de charger la liste des options. Recharge la page dans quelques secondes.", "erreur");
   }
 
-  const obtenirPhotoUrl = initTeleverseurAvatar();
+  let obtenirPhotoUrl = null;
+  try {
+    obtenirPhotoUrl = initTeleverseurAvatar();
+  } catch (err) {
+    console.error("Erreur lors de l'initialisation du sélecteur de photo :", err);
+  }
 
   const compteurPresentation = document.getElementById("compteur-presentation");
   form.presentation.addEventListener("input", () => {
@@ -133,13 +153,25 @@ function initBoutonsOeil() {
 function initTeleverseurAvatar() {
   const zone = document.getElementById("televerseur-photo");
   const inputPhoto = document.getElementById("photo");
-  const cercle = document.getElementById("televerseur-cercle");
+  const enveloppe = document.getElementById("televerseur-enveloppe");
   const apercu = document.getElementById("apercu-photo");
   const texte = document.getElementById("texte-televerseur");
   const statut = document.getElementById("statut-upload");
-  if (!zone || !inputPhoto) return null;
 
-  cercle.addEventListener("click", () => inputPhoto.click());
+  // Garde de sécurité : si UN SEUL de ces éléments manque (ex : ancienne version du HTML
+  // encore en cache), on log un avertissement au lieu de lever une erreur qui casserait
+  // silencieusement le reste du formulaire (compteur de caractères, bouton "valider").
+  if (!zone || !inputPhoto || !enveloppe || !apercu || !texte || !statut) {
+    console.warn(
+      "Sélecteur de photo : un ou plusieurs éléments HTML attendus sont introuvables. " +
+      "Vérifie que pages/inscription.html correspond bien à la dernière version fournie " +
+      "(id attendus : televerseur-photo, televerseur-enveloppe, photo, apercu-photo, texte-televerseur, statut-upload)."
+    );
+    return null;
+  }
+
+  // Clic sur la photo OU sur le badge crayon : les deux ouvrent le sélecteur de fichier.
+  enveloppe.addEventListener("click", () => inputPhoto.click());
 
   let photoUrl = null;
 

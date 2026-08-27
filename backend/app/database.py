@@ -4,7 +4,7 @@ Fonctionne aussi bien avec SQLite (développement) qu'avec PostgreSQL (productio
 la seule chose à changer est la variable DATABASE_URL dans le fichier .env.
 """
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 from app.config import settings
 

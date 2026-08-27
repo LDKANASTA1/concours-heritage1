@@ -35,10 +35,10 @@ d'ajouter, y compris pour un usage scolaire.
 
 ```
 projet-ambassadeurs-heritage1/
-├── backend/            API FastAPI (Python)
+├── backend/            API FastAPI (Python) — déployée séparément (ex. Render)
 │   ├── app/
 │   │   ├── main.py, config.py, database.py, models.py, schemas.py, auth.py
-│   │   ├── routes/     auth, users, votes, statistiques, contact, share, notifications, temoignages, admin
+│   │   ├── routes/     auth, users, votes, statistiques, contact, share, notifications, temoignages, admin, visites
 │   │   ├── services/   imgbb_service, email_service, elus_service
 │   │   └── utils/      validators (téléphone RDC, PIN)
 │   ├── .env.example    modèle de configuration (copier en .env)
@@ -46,14 +46,30 @@ projet-ambassadeurs-heritage1/
 │   ├── run.py          lancement en développement
 │   ├── create_admin.py création d'un compte de modération
 │   └── Dockerfile
-├── frontend/           HTML/CSS/JS statique, aucune dépendance de build
-│   ├── index.html
-│   ├── pages/          15 pages (voir liste ci-dessous)
-│   ├── css/, js/
-│   └── assets/
+├── index.html          Frontend statique — À LA RACINE pour un déploiement direct sur GitHub Pages
+├── pages/               15 pages (voir liste ci-dessous)
+├── css/, js/, assets/
 ├── docker-compose.yml  déploiement optionnel (Postgres + backend + frontend statique)
 └── README.md
 ```
+
+**Important :** le frontend (`index.html`, `pages/`, `css/`, `js/`, `assets/`) est
+volontairement à la racine du dépôt, et non dans un sous-dossier `frontend/`,
+pour que GitHub Pages puisse le servir directement sans configuration
+supplémentaire. Le dossier `backend/` n'est pas concerné par ce déploiement :
+il doit être hébergé séparément (voir section « Backend en production »).
+
+### Backend actuellement déployé
+
+Toutes les pages du frontend pointent déjà vers :
+
+```
+https://concours-backend-686g.onrender.com
+```
+
+Si vous redéployez le backend ailleurs (autre URL Render, autre hébergeur),
+remplacez cette URL dans **tous** les fichiers HTML (recherchez
+`HERITAGE1_API_URL`) ainsi que dans `js/api.js` (recherchez `API_BASE_URL`).
 
 ### Pages du frontend
 
@@ -84,16 +100,19 @@ pour tester le projet entre élèves.
 
 ### 2. Frontend
 
-Aucune compilation nécessaire. Le plus simple :
+Aucune compilation nécessaire. Le frontend est à la racine du projet
+(à côté du dossier `backend/`). Le plus simple, depuis la racine du projet :
 
 ```bash
-cd frontend
 python3 -m http.server 5500
 ```
 
-Puis ouvrez `http://localhost:5500`. Si votre API tourne sur une autre URL,
-changez la ligne `window.HERITAGE1_API_URL = "http://localhost:8000";`
-présente en haut de chaque page HTML.
+Puis ouvrez `http://localhost:5500`. Les pages pointent déjà vers le backend
+déployé sur Render (`https://concours-backend-686g.onrender.com`) : aucune
+configuration n'est nécessaire pour tester tel quel. Pour tester contre un
+backend lancé en local à la place, remplacez, dans **tous** les fichiers
+HTML, la ligne `window.HERITAGE1_API_URL = "https://concours-backend-686g.onrender.com";`
+par `window.HERITAGE1_API_URL = "http://localhost:8000";`.
 
 ### 3. Créer un compte de modération (professeur référent / délégué)
 
@@ -145,6 +164,24 @@ docker compose up --build
 Le backend écoute sur `:8000`, PostgreSQL sur `:5432`, le frontend statique
 sur `:5500`. Pensez à changer les mots de passe par défaut dans
 `docker-compose.yml` avant tout déploiement réel.
+
+### Option C — GitHub Pages (frontend uniquement)
+
+Le frontend est déjà structuré pour ça (fichiers à la racine du dépôt) :
+
+1. Poussez tout le contenu de ce dossier (backend inclus, ce n'est pas gênant)
+   dans un dépôt GitHub.
+2. Dans le dépôt GitHub : **Settings → Pages → Source**, choisissez la branche
+   `main` et le dossier `/ (root)`.
+3. GitHub publie le site à une adresse du type
+   `https://votre-utilisateur.github.io/nom-du-depot/`.
+4. Le frontend appelle déjà `https://concours-backend-686g.onrender.com` :
+   aucune configuration supplémentaire n'est nécessaire côté frontend.
+5. **Important côté backend** : dans `backend/.env` (sur Render), mettez à
+   jour `FRONTEND_URL` avec l'URL GitHub Pages réelle, pour que la
+   configuration CORS (`app/main.py`) autorise les requêtes venant de ce
+   domaine. Sans ça, le navigateur bloquera les appels à l'API une fois
+   `DEBUG=false` en production.
 
 ## Migrations de schéma (Alembic)
 

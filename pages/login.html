@@ -26,20 +26,24 @@
 
       <form id="form-connexion" novalidate>
 
-        <div class="champ champ-icone">
+        <div class="champ">
           <label for="numero">Numéro de téléphone</label>
-          <i class="fa-solid fa-phone champ-icone__pictogramme"></i>
-          <input type="tel" id="numero" name="numero" placeholder="08XXXXXXXX ou +243XXXXXXXXX" autocomplete="tel" required>
+          <div class="champ-icone">
+            <i class="fa-solid fa-phone champ-icone__pictogramme"></i>
+            <input type="tel" id="numero" name="numero" placeholder="08XXXXXXXX ou +243XXXXXXXXX" autocomplete="tel" required>
+          </div>
         </div>
 
-        <div class="champ champ-icone">
+        <div class="champ">
           <label for="pin">Code PIN</label>
-          <i class="fa-solid fa-lock champ-icone__pictogramme"></i>
-          <input type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4"
-                 placeholder="••••" autocomplete="current-password" required>
-          <button type="button" class="champ-icone__bouton-oeil" data-cible="pin" aria-label="Afficher le code PIN">
-            <i class="fa-solid fa-eye"></i>
-          </button>
+          <div class="champ-icone">
+            <i class="fa-solid fa-lock champ-icone__pictogramme"></i>
+            <input type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4"
+                   placeholder="••••" autocomplete="current-password" required>
+            <button type="button" class="champ-icone__bouton-oeil" data-cible="pin" aria-label="Afficher le code PIN">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="bouton bouton--principal bouton--bloc">

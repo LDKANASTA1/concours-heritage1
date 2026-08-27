@@ -32,7 +32,11 @@ services:
     image: nginx:alpine
     restart: unless-stopped
     volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./pages:/usr/share/nginx/html/pages:ro
+      - ./css:/usr/share/nginx/html/css:ro
+      - ./js:/usr/share/nginx/html/js:ro
+      - ./assets:/usr/share/nginx/html/assets:ro
     ports:
       - "5500:80"
 
