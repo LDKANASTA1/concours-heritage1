@@ -41,6 +41,7 @@ ORIGINES_AUTORISEES = {
     "https://ldkanasta1.github.io",
     "http://localhost:5500",
     "http://127.0.0.1:5500",
+    "https://ldkanasta1.github.io/concours-heritage1/"
 }
 
 app.add_middleware(
@@ -52,7 +53,7 @@ app.add_middleware(
 )
 
 # Rate limiting renforcé sur les endpoints d'authentification (5 tentatives/minute)
-limiter.limit("5/minute")(auth.router)
+#limiter.limit("5/minute")(auth.router)
 
 app.include_router(auth.router)
 app.include_router(users.router)
