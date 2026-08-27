@@ -12,14 +12,7 @@ Par rapport au projet initial, cette version :
 from datetime import datetime
 
 from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
+    Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
@@ -152,7 +145,6 @@ class ProgressionVote(Base):
     votant = relationship("User")
 
 
-
 class Notification(Base):
     """Notifications envoyées à un élève (vote reçu, élu, système, info)."""
     __tablename__ = "notifications"
@@ -263,3 +255,15 @@ class Administrateur(Base):
     password_hash = Column(String(255), nullable=False)
     est_actif = Column(Boolean, default=True)
     date_creation = Column(DateTime, default=datetime.utcnow)
+
+
+class VisiteSite(Base):
+    """
+    Compteur global de visites du site (une seule ligne en base, id=1).
+    Incrémenté une fois par session de navigateur côté frontend (voir js/app.js).
+    """
+    __tablename__ = "visites_site"
+
+    id = Column(Integer, primary_key=True, index=True)
+    total_visites = Column(Integer, default=0, nullable=False)
+    derniere_visite = Column(DateTime, default=datetime.utcnow)

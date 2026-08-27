@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.utils.validators import valider_numero_rdc, valider_pin
 
+
 # ---------- Utilisateurs ----------
 
 class UserInscription(BaseModel):
@@ -248,3 +249,9 @@ class AdminToken(BaseModel):
     token_type: str = "bearer"
     nom_complet: str
     role: str
+
+
+# ---------- Compteur de visiteurs ----------
+
+class VisiteSiteReponse(BaseModel):
+    total_visites: int

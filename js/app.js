@@ -97,7 +97,7 @@ function construirePied() {
         </div>
         <div class="pied__bas">
           <span>&copy; ${new Date().getFullYear()} ${NOM_ECOLE} - République Démocratique du Congo</span>
-          <span>Vote basé sur le mérite : leadership, engagement, esprit d'équipe.</span>
+          <span><i class="fa-solid fa-eye"></i> <span id="compteur-visites">...</span> visite(s) depuis le lancement</span>
         </div>
       </div>
     </footer>
@@ -105,6 +105,28 @@ function construirePied() {
       <i class="fa-brands fa-whatsapp"></i>
     </a>
     <div class="zone-toasts" id="zone-toasts"></div>`;
+}
+
+/**
+ * Compteur de visiteurs : incrémente une seule fois par session de navigateur
+ * (sessionStorage), puis affiche le total dans le pied de page sur chaque page.
+ */
+async function initialiserCompteurVisites() {
+  const zoneAffichage = document.getElementById("compteur-visites");
+  if (!zoneAffichage) return;
+
+  try {
+    let resultat;
+    if (!sessionStorage.getItem("h1_visite_comptee")) {
+      resultat = await Api.post("/api/visites/incrementer", {});
+      sessionStorage.setItem("h1_visite_comptee", "1");
+    } else {
+      resultat = await Api.get("/api/visites");
+    }
+    zoneAffichage.textContent = resultat.total_visites.toLocaleString("fr-FR");
+  } catch (_) {
+    zoneAffichage.textContent = "—";
+  }
 }
 
 function afficherToast(message, type = "info") {
@@ -122,6 +144,7 @@ function initialiserApp() {
   const piedRacine = document.getElementById("pied-racine");
   if (enteteRacine) enteteRacine.innerHTML = construireNav();
   if (piedRacine) piedRacine.innerHTML = construirePied();
+  initialiserCompteurVisites();
 
   const burger = document.getElementById("nav-burger");
   const liens = document.getElementById("nav-liens");

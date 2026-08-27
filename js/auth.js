@@ -51,28 +51,7 @@ async function initFormulaireInscription() {
     afficherToast("Impossible de charger la liste des options. Vérifiez que le serveur est démarré.", "erreur");
   }
 
-  const inputPhoto = document.getElementById("photo");
-  const apercu = document.getElementById("apercu-photo");
-  let photoUrl = null;
-
-  inputPhoto.addEventListener("change", async () => {
-    const fichier = inputPhoto.files[0];
-    if (!fichier) return;
-    apercu.src = URL.createObjectURL(fichier);
-    apercu.style.display = "block";
-
-    try {
-      const zoneStatut = document.getElementById("statut-upload");
-      zoneStatut.textContent = "Envoi de la photo en cours...";
-      const resultat = await Api.uploadPhoto(fichier);
-      photoUrl = resultat.photo_url;
-      zoneStatut.textContent = "Photo envoyée avec succès.";
-      zoneStatut.style.color = "var(--succes)";
-    } catch (err) {
-      document.getElementById("statut-upload").textContent = "Échec de l'envoi : " + err.message;
-      document.getElementById("statut-upload").style.color = "var(--erreur)";
-    }
-  });
+  const obtenirPhotoUrl = initTeleverseurAvatar();
 
   const compteurPresentation = document.getElementById("compteur-presentation");
   form.presentation.addEventListener("input", () => {
@@ -82,6 +61,7 @@ async function initFormulaireInscription() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const photoUrl = obtenirPhotoUrl ? obtenirPhotoUrl() : null;
     if (!photoUrl) {
       afficherToast("Merci d'attendre la fin de l'envoi de ta photo avant de valider.", "erreur");
       return;
@@ -130,7 +110,65 @@ function afficherErreurFormulaire(form, message) {
   zone.textContent = message;
 }
 
+/** Bouton "œil" : bascule un champ password en text et inverse l'icône. */
+function initBoutonsOeil() {
+  document.querySelectorAll(".champ-icone__bouton-oeil").forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      const champ = document.getElementById(bouton.dataset.cible);
+      if (!champ) return;
+      const icone = bouton.querySelector("i");
+      const visible = champ.type === "text";
+      champ.type = visible ? "password" : "text";
+      icone.classList.toggle("fa-eye", visible);
+      icone.classList.toggle("fa-eye-slash", !visible);
+      bouton.setAttribute("aria-label", visible ? "Afficher le code PIN" : "Masquer le code PIN");
+    });
+  });
+}
+
+/**
+ * Sélecteur de photo façon avatar (page d'inscription) : tout le cercle est cliquable
+ * (aussi bien pour ajouter une photo que pour la changer), l'input file réel est masqué.
+ */
+function initTeleverseurAvatar() {
+  const zone = document.getElementById("televerseur-photo");
+  const inputPhoto = document.getElementById("photo");
+  const cercle = document.getElementById("televerseur-cercle");
+  const apercu = document.getElementById("apercu-photo");
+  const texte = document.getElementById("texte-televerseur");
+  const statut = document.getElementById("statut-upload");
+  if (!zone || !inputPhoto) return null;
+
+  cercle.addEventListener("click", () => inputPhoto.click());
+
+  let photoUrl = null;
+
+  inputPhoto.addEventListener("change", async () => {
+    const fichier = inputPhoto.files[0];
+    if (!fichier) return;
+
+    apercu.src = URL.createObjectURL(fichier);
+    zone.classList.add("televerseur-photo--rempli");
+    texte.textContent = "Changer ma photo";
+
+    try {
+      statut.textContent = "Envoi de la photo en cours...";
+      statut.style.color = "var(--texte-att)";
+      const resultat = await Api.uploadPhoto(fichier);
+      photoUrl = resultat.photo_url;
+      statut.textContent = "Photo envoyée avec succès.";
+      statut.style.color = "var(--succes)";
+    } catch (err) {
+      statut.textContent = "Échec de l'envoi : " + err.message;
+      statut.style.color = "var(--erreur)";
+    }
+  });
+
+  return () => photoUrl;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initFormulaireConnexion();
   initFormulaireInscription();
+  initBoutonsOeil();
 });

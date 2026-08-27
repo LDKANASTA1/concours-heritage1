@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion - Concours des Ambassadeurs - HERITAGE 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+<div id="entete-racine"></div>
+
+<section class="page-auth">
+  <div class="carte-auth anim-entree">
+    <div class="carte-auth__ruban"></div>
+    <div class="carte-auth__corps">
+
+      <div class="carte-auth__icone">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2 class="centre-texte" style="margin-bottom:4px;">Content de te revoir</h2>
+      <p class="centre-texte texte-att" style="margin-bottom:28px;">Connecte-toi pour voter et suivre le classement en direct.</p>
+
+      <form id="form-connexion" novalidate>
+
+        <div class="champ champ-icone">
+          <label for="numero">Numéro de téléphone</label>
+          <i class="fa-solid fa-phone champ-icone__pictogramme"></i>
+          <input type="tel" id="numero" name="numero" placeholder="08XXXXXXXX ou +243XXXXXXXXX" autocomplete="tel" required>
+        </div>
+
+        <div class="champ champ-icone">
+          <label for="pin">Code PIN</label>
+          <i class="fa-solid fa-lock champ-icone__pictogramme"></i>
+          <input type="password" id="pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4"
+                 placeholder="••••" autocomplete="current-password" required>
+          <button type="button" class="champ-icone__bouton-oeil" data-cible="pin" aria-label="Afficher le code PIN">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+
+        <button type="submit" class="bouton bouton--principal bouton--bloc">
+          <i class="fa-solid fa-right-to-bracket"></i> Se connecter
+        </button>
+      </form>
+
+      <div class="separateur-ou">Nouveau ici ?</div>
+
+      <a href="inscription.html" class="bouton bouton--contour bouton--bloc">
+        <i class="fa-solid fa-pen-to-square"></i> Déposer ma candidature
+      </a>
+
+      <div class="carte-auth__confiance">
+        <span><i class="fa-solid fa-shield-halved"></i> Données protégées</span>
+        <span><i class="fa-solid fa-eye-slash"></i> PIN jamais visible</span>
+        <span><i class="fa-solid fa-check-double"></i> Vote vérifiable</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="pied-racine"></div>
+
+<script>window.HERITAGE1_API_URL = "https://concours-backend-686g.onrender.com";</script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/auth.js"></script>
+</body>
+</html>

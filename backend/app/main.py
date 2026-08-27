@@ -10,17 +10,7 @@ from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.database import Base, engine
-from app.routes import (
-    admin,
-    auth,
-    contact,
-    notifications,
-    share,
-    statistiques,
-    temoignages,
-    users,
-    votes,
-)
+from app.routes import admin, auth, contact, notifications, share, statistiques, temoignages, users, visites, votes
 
 # Crée toutes les tables si elles n'existent pas encore.
 # Pour des évolutions ultérieures du schéma en production, utilisez Alembic plutôt que
@@ -51,7 +41,7 @@ app.add_middleware(
 )
 
 # Rate limiting renforcé sur les endpoints d'authentification (5 tentatives/minute)
-#limiter.limit("5/minute")(auth.router)
+limiter.limit("5/minute")(auth.router)
 
 app.include_router(auth.router)
 app.include_router(users.router)
@@ -62,6 +52,7 @@ app.include_router(share.router)
 app.include_router(notifications.router)
 app.include_router(temoignages.router)
 app.include_router(admin.router)
+app.include_router(visites.router)
 
 
 @app.get("/", tags=["Santé"])

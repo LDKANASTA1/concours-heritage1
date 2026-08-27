@@ -5,10 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.auth import (
-    MAX_TENTATIVES,
-    creer_token_acces,
-    hasher_pin,
-    verifier_pin,
+    MAX_TENTATIVES, creer_token_acces, hasher_pin, verifier_pin,
     verifier_verrouillage,
 )
 from app.config import OPTIONS_CODES
