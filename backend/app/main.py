@@ -10,7 +10,18 @@ from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.database import Base, engine
-from app.routes import admin, auth, contact, notifications, share, statistiques, temoignages, users, visites, votes
+from app.routes import (
+    admin,
+    auth,
+    contact,
+    notifications,
+    share,
+    statistiques,
+    temoignages,
+    users,
+    visites,
+    votes,
+)
 
 # Crée toutes les tables si elles n'existent pas encore.
 # Pour des évolutions ultérieures du schéma en production, utilisez Alembic plutôt que
